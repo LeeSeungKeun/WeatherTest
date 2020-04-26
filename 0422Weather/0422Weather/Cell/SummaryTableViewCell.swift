@@ -17,7 +17,7 @@ class SummaryTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        // Cell 초기화
         backgroundColor = UIColor.clear
         statusLabel.textColor = UIColor.white
         minMaxLabel.textColor = statusLabel.textColor

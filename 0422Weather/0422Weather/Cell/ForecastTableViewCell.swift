@@ -18,7 +18,7 @@ class ForecastTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        // 셀초기화
         backgroundColor = UIColor.clear
         dateLabel.textColor = UIColor.white
         timeLabel.textColor = dateLabel.textColor
