@@ -100,29 +100,36 @@ class WeatherDataSource {
             }
             // #1
             if let error = error {
-                fatalError(error.localizedDescription)
+//                fatalError(error.localizedDescription)
+                print("ERROR#1 => \(error)")
             }
             // #2
             guard let httpRespose = response as? HTTPURLResponse else {
-                fatalError()
+                  print("ERROR response #2 => \(response)")
+                  return
+//                fatalError()
             }
 
             guard (200..<400).contains(httpRespose.statusCode) else {
-                print(httpRespose.statusCode)
-                fatalError()
+                  print(httpRespose.statusCode)
+                  return
+//                fatalError()
             }
             // #3
             guard let data = data else {
-                fatalError()
+                print("ERROR data  #3 => \(error)")
+                return
             }
 
+            //#4 JSON 파싱
             do {
+                // JSON 파싱
                 let decoder = JSONDecoder()
                 let forecast = try decoder.decode(Forecast.self, from: data)
-                dump(forecast)
+                dump(forecast) // 정상적으로 데이터가 들어오는지 덤프
                 self.forecastList = forecast.weather.arrayRepersentation()
             }catch{
-                print(error)
+                print("do catch -> \(error)")
             }
 
         }
