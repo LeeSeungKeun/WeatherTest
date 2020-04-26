@@ -17,9 +17,10 @@ class WeatherDataSource {
     var summary : WeatherSummary?
     var forecastList = [ForecastData]()
 
-    let group = DispatchGroup()
-    let workQueue = DispatchQueue(label: "apiQueue", attributes: .concurrent)
+    let group = DispatchGroup() // 디스패치그룹
+    let workQueue = DispatchQueue(label: "apiQueue", attributes: .concurrent) // 새로운큐 생성
 
+    // 그룹/큐 패치 메서드
     func fetch(location : CLLocation, completion: @escaping ()->() )  {
         group.enter()
         workQueue.async {
@@ -29,6 +30,7 @@ class WeatherDataSource {
         }
 
         group.enter()
+
         workQueue.async {
             self.fetchForecast(lat: location.coordinate.latitude, lon: location.coordinate.longitude) {
                 self.group.leave()
