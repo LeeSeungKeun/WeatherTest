@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 class ViewController: UIViewController {
+    // 위치 매니저
     lazy var locatoinManager : CLLocationManager = {
         let m = CLLocationManager()
         m.delegate = self
@@ -35,7 +36,7 @@ class ViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        // 테이블뷰 인셋 설정
         if topInset == 0.0 {
             let firstIndexPath = IndexPath(row:0, section: 0)
 
@@ -57,24 +58,18 @@ class ViewController: UIViewController {
 
         listTableView.backgroundColor = UIColor.clear
 
-//        WeatherDataSource.shared.fetchSummary(lat: 37.498206, lon: 127.02761) {
-//            self.listTableView.reloadData()
-//        }
-//        WeatherDataSource.shared.fetchForecast(lat: 37.498206, lon: 127.02761) {
-//            self.listTableView.reloadData()
-//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        //위치권한 허용/항상/안함 설정하기
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
-            case .notDetermined:
-                locatoinManager.requestWhenInUseAuthorization()
-            case .authorizedWhenInUse , .authorizedAlways :
-                updateLocation()
-            case.denied ,.restricted:
+            case .notDetermined: //위치 서비스를 사용할 수 있는지 여부를 선택하지 않았으떄
+                locatoinManager.requestWhenInUseAuthorization() // 권한여부 물어보기
+            case .authorizedWhenInUse , .authorizedAlways : //권한여부 승낙 시
+                updateLocation() // 위치업데이트
+            case.denied ,.restricted: 
                 break
             default:
                 return
@@ -93,9 +88,9 @@ extension ViewController : UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
+        case 0:  // 상단 맨위는 현재 날짜 하나만 표시하기 떄문에 리턴1
             return 1
-        case 1:
+        case 1:  // 색션2는 4~ 67시간 까지 표시
             return WeatherDataSource.shared.forecastList.count
         default:
             return 0
@@ -103,7 +98,7 @@ extension ViewController : UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
+        if indexPath.section == 0 { //1번 섹션 셀
             let cell = tableView.dequeueReusableCell(withIdentifier: "SummaryTableViewCell", for: indexPath) as! SummaryTableViewCell
 
             if let target = WeatherDataSource.shared.summary?.weather.minutely.first {
@@ -115,7 +110,7 @@ extension ViewController : UITableViewDataSource {
             }
             return cell
 
-        }else {
+        }else { //2번 색션 셀
             let cell = tableView.dequeueReusableCell(withIdentifier: "ForecastTableViewCell", for: indexPath) as! ForecastTableViewCell
             let target = WeatherDataSource.shared.forecastList[indexPath.row]
 
@@ -139,7 +134,7 @@ extension ViewController : UITableViewDelegate {
 }
 
 // 셀안의 객체들을 VC 에 연결하면 안되는 이유
-//
+// 반복된 컨텐츠 즉 셀은 1개이상의 컨텐츠를 표시할수 있기때문에 vc 에 연결하면 안됨
 
 
 extension ViewController : CLLocationManagerDelegate {
@@ -147,9 +142,11 @@ extension ViewController : CLLocationManagerDelegate {
         locatoinManager.requestLocation()
     }
 
+    // 위치정보가져오기 실패시
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         manager.stopUpdatingLocation()
     }
+    // 위치정보가 업데이트되고 나서
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             print(location)
@@ -171,7 +168,7 @@ extension ViewController : CLLocationManagerDelegate {
 
         manager.stopUpdatingLocation()
     }
-
+    // 위치정보 권한 상태 확인
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
         case .notDetermined:
